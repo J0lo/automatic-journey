@@ -1,0 +1,24 @@
+{
+  "name": "invest-newsletter",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/J0lo/automatic-journey.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/J0lo/automatic-journey/issues"
+  },
+  "homepage": "https://github.com/J0lo/automatic-journey#readme",
+  "dependencies": {
+    "mariadb": "^2.5.5",
+    "nodemailer": "^6.7.2",
+    "sequelize": "^6.14.0"
+  }
+}
