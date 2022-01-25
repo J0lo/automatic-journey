@@ -1,6 +1,7 @@
 const nodemailer = require('nodemailer');
 const config = require("./config");
 const initModel = require('./model');
+const methods = require('./methods');
 
 const tableStyle = "width: 100%; border: 1px solid;";
 const theadStyle = "border: 1px solid;";
@@ -17,7 +18,18 @@ const percentageFormatter = new Intl.NumberFormat('pl-PL', {
   });
 
 function generateHtml(data) {
-    let header = `<thead style='${theadStyle}'><th style='${theadStyle}'>Company Name</th><th style='${theadStyle}'>Price</th><th style='${theadStyle}'>Graham Number</th><th style='${theadStyle}'>% Graham Number Diff</th></thead>`;
+    let header = `<thead style='${theadStyle}'>`;
+    header += `<th style='${theadStyle}'>Company Name</th>`;
+    header += `<th style='${theadStyle}'>Price</th>`;
+
+    methods.forEach((method) => {
+        header += `<th style='${theadStyle}'>${method.name}</th>`;
+        if(method.calcDifference) {
+            header += `<th style='${theadStyle}'>% ${method.name} Diff</th>`;
+        }
+    });
+    header += `</thead>`;
+
     let body = `<tbody>`;
 
     data.forEach((item) => {
@@ -25,9 +37,13 @@ function generateHtml(data) {
         body += `<td style='${tdStyle}'>${item.CompanyName}</td>`;
         body += `<td style='${tdStyle}'>${currencyFormatter.format(item.Price)}</td>`;
 
-        body += `<td style='${tdStyle}'>${currencyFormatter.format(item.GrahamNumber)}</td>`;
-        body += `<td style='${tdStyle}'>${percentageFormatter.format((item.GrahamNumber / item.Price) - 1)}</td>`;
-        
+        item.MethodValues.forEach((method) => {
+            let value = method.useNumberFormatter ? currencyFormatter.format(method.value) : method.value;
+            body += `<td style='${tdStyle}'>${value}</td>`;
+            if(method.calcDifference) {
+                body += `<td style='${tdStyle}'>${percentageFormatter.format(method.percentage)}</td>`;
+            }
+        });
         body += `</tr>`;
     });
 

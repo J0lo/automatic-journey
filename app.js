@@ -29,6 +29,9 @@ async function main() {
                 "Price",
                 "EPS",
                 "BVPS",
+                "PE",
+                "PBV",
+                "CurrentRatio",
                 [seq.fn('max', seq.col('Timestamp')), 'Timestamp'],
             ],
             group: 'CompanyId'
@@ -38,10 +41,18 @@ async function main() {
             mailData.push({
                 CompanyName: companies.find((company) => company.Id === item.CompanyId).Name,
                 Price: item.dataValues.Price,
-                GrahamNumber: methods.grahamNumber(item.dataValues)
+                MethodValues: methods.map((method) => {
+                    let value = method.calc(item.dataValues);
+                    return {
+                        value: value,
+                        percentage: method.calcDifference ? ((value / item.dataValues.Price) - 1) : undefined,
+                        calcDifference: method.calcDifference,
+                        useNumberFormatter: method.useNumberFormatter
+                    };
+                })
             });
-        })
-        
+        });
+
         mailer.sendEmail(mailData);
     }
     catch (err) {
