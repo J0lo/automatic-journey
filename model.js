@@ -72,6 +72,14 @@ var initModel = (sequelize) => {
           type: DataTypes.FLOAT,
           allowNull: false
         },
+        DividendJson: {
+          type: DataTypes.STRING,
+          allowNull: false
+        },
+        EarningsJson: {
+          type: DataTypes.STRING,
+          allowNull: false
+        }
       }, {
         sequelize,
         modelName: 'ScrapedData',

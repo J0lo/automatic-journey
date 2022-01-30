@@ -38,7 +38,7 @@ function generateHtml(data) {
         body += `<td style='${tdStyle}'>${currencyFormatter.format(item.Price)}</td>`;
 
         item.MethodValues.forEach((method) => {
-            let value = method.useNumberFormatter ? currencyFormatter.format(method.value) : method.value;
+            let value = method.useNumberFormatter ? currencyFormatter.format(method.value) : `<strong>${method.value.Result}</strong> ${JSON.stringify(method.value)}`;
             body += `<td style='${tdStyle}'>${value}</td>`;
             if(method.calcDifference) {
                 body += `<td style='${tdStyle}'>${percentageFormatter.format(method.percentage)}</td>`;

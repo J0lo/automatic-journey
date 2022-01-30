@@ -15,31 +15,39 @@ const seq = new Sequelize(config.db.database, config.db.username, config.db.pass
 initModel(seq);
 
 let mailData = [];
-
 async function main() {
     try {
         seq.authenticate();
         console.log('Connected to invest Db');
 
         let companies = await seq.models.WatchedCompany.findAll();
-        let newestData = await seq.models.ScrapedData.findAll({
-            attributes: [
-                'CompanyId',
-                'Id',
-                "Price",
-                "EPS",
-                "BVPS",
-                "PE",
-                "PBV",
-                "CurrentRatio",
-                [seq.fn('max', seq.col('Timestamp')), 'Timestamp'],
-            ],
-            group: 'CompanyId'
-        });
 
-        newestData.forEach((item) => {
-            mailData.push({
-                CompanyName: companies.find((company) => company.Id === item.CompanyId).Name,
+        for (let i = 0; i < companies.length; i++) {
+            let company = companies[i];
+            let item = await seq.models.ScrapedData.findOne({
+                attributes: [
+                    'CompanyId',
+                    'Id',
+                    "Price",
+                    "EPS",
+                    "BVPS",
+                    "PE",
+                    "PBV",
+                    "CurrentRatio",
+                    "DividendJson",
+                    "EarningsJson",
+                    'Timestamp'
+                ],
+                where: {
+                    CompanyId: company.Id
+                },
+                order: [
+                    ['Timestamp', 'DESC']
+                ] 
+            });
+            
+            let companyData = {
+                CompanyName: company.Name,
                 Price: item.dataValues.Price,
                 MethodValues: methods.map((method) => {
                     let value = method.calc(item.dataValues);
@@ -50,9 +58,10 @@ async function main() {
                         useNumberFormatter: method.useNumberFormatter
                     };
                 })
-            });
-        });
-
+            }
+            mailData.push(companyData);
+        };
+        
         mailer.sendEmail(mailData);
     }
     catch (err) {
