@@ -6,6 +6,15 @@ const methods = require('./methods');
 const tableStyle = "width: 100%; border: 1px solid;";
 const theadStyle = "border: 1px solid;";
 const tdStyle = "border: 1px solid;";
+const styles = `<style type="text/css" scoped>
+    span em {
+        display: none
+    }
+
+    span:hover em {
+        display: block
+    }
+</style>`;
 
 const currencyFormatter = new Intl.NumberFormat('pl-PL', {
     style: 'currency',
@@ -38,7 +47,7 @@ function generateHtml(data) {
         body += `<td style='${tdStyle}'>${currencyFormatter.format(item.Price)}</td>`;
 
         item.MethodValues.forEach((method) => {
-            let value = method.useNumberFormatter ? currencyFormatter.format(method.value) : `<strong>${method.value.Result}</strong> ${JSON.stringify(method.value)}`;
+            let value = method.useNumberFormatter ? currencyFormatter.format(method.value) : `<span><strong>${method.value.Result}</strong><em>${JSON.stringify(method.value)}</em></span>`;
             body += `<td style='${tdStyle}'>${value}</td>`;
             if(method.calcDifference) {
                 body += `<td style='${tdStyle}'>${percentageFormatter.format(method.percentage)}</td>`;
@@ -49,7 +58,7 @@ function generateHtml(data) {
 
     body += `</tbody>`;
 
-    return `<h2>Financial Report</h2><table style='${tableStyle}'>${header}${body}</table>`;
+    return `${styles}<h2>Financial Report</h2><table style='${tableStyle}'>${header}${body}</table>`;
 }
 
 var mailer = {

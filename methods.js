@@ -11,12 +11,20 @@ methods.push({
         let dividends = JSON.parse(data.DividendJson);
         let earnings = JSON.parse(data.EarningsJson);
 
-        let maxYearDividends = dividends.map((d) => d.year).reduce(getMaxYear);
-        let dividendsLastNYears = dividends.filter((d) => d.year >= maxYearDividends - N + 1);
+        let dividendsLastNYears = []
+        let maxYearDividends = 0;
+        if (dividends.length > 0) {
+            maxYearDividends = dividends.map((d) => d.year).reduce(getMaxYear);
+            dividendsLastNYears = dividends.filter((d) => d.year >= maxYearDividends - N + 1);
+        }
 
-        let maxYearEarnings = earnings.map((e) => e.year).reduce(getMaxYear);
-        let positiveEarningsLastNYears = earnings.filter((e) => e.year >= maxYearEarnings - N + 1 && e.value > 0);
-        console.log(positiveEarningsLastNYears)
+        let positiveEarningsLastNYears = [];
+        let maxYearEarnings = 0;
+        if (earnings.length > 0) {
+            maxYearEarnings = earnings.map((e) => e.year).reduce(getMaxYear);
+            positiveEarningsLastNYears = earnings.filter((e) => e.year >= maxYearEarnings - N + 1 && e.value > 0);
+        }
+
         let ret = {
             CurrentRatio: data.CurrentRatio >= 1.2,
             PE: data.PE <= 15,
@@ -24,7 +32,7 @@ methods.push({
             DividendNewest: maxYearDividends >= currentYear - 1,
             DividendsCount: dividendsLastNYears.length >= N,
             PositiveEarnings: positiveEarningsLastNYears.length >= N,
-            EarningsGrowth: positiveEarningsLastNYears[0].value >= (positiveEarningsLastNYears[positiveEarningsLastNYears.length - 1].value * 1.2)
+            EarningsGrowth: positiveEarningsLastNYears.length >= N && positiveEarningsLastNYears[0].value >= (positiveEarningsLastNYears[positiveEarningsLastNYears.length - 1].value * 1.2)
         }
 
         ret.Result = ret.CurrentRatio
