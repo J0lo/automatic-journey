@@ -30,28 +30,6 @@ var initModel = (sequelize) => {
           type: DataTypes.STRING,
           allowNull: false
         },
-      }, {
-        sequelize,
-        modelName: 'WatchedCompany',
-        tableName: "WatchedCompanies",
-        createdAt: false,
-        updatedAt: false
-      });
-      
-      ScrapedData.init({
-        Id: {
-          type: DataTypes.STRING,
-          allowNull: false,
-          primaryKey: true
-        },
-        CompanyId: {
-          type: DataTypes.STRING,
-          allowNull: false
-        },
-        Price: {
-          type: DataTypes.FLOAT,
-          allowNull: false
-        },
         EPS: {
           type: DataTypes.FLOAT,
           allowNull: false
@@ -79,7 +57,45 @@ var initModel = (sequelize) => {
         EarningsJson: {
           type: DataTypes.STRING,
           allowNull: false
-        }
+        },
+      }, {
+        sequelize,
+        modelName: 'WatchedCompany',
+        tableName: "WatchedCompanies",
+        createdAt: false,
+        updatedAt: false
+      });
+      
+      ScrapedData.init({
+        Id: {
+          type: DataTypes.STRING,
+          allowNull: false,
+          primaryKey: true
+        },
+        CompanyId: {
+          type: DataTypes.STRING,
+          allowNull: false
+        },
+        Price: {
+          type: DataTypes.FLOAT,
+          allowNull: false
+        },
+        High: {
+          type: DataTypes.FLOAT,
+          allowNull: false
+        },
+        Low: {
+          type: DataTypes.FLOAT,
+          allowNull: false
+        },
+        Open: {
+          type: DataTypes.FLOAT,
+          allowNull: false
+        },
+        Close: {
+          type: DataTypes.FLOAT,
+          allowNull: false
+        },
       }, {
         sequelize,
         modelName: 'ScrapedData',

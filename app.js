@@ -29,13 +29,6 @@ async function main() {
                     'CompanyId',
                     'Id',
                     "Price",
-                    "EPS",
-                    "BVPS",
-                    "PE",
-                    "PBV",
-                    "CurrentRatio",
-                    "DividendJson",
-                    "EarningsJson",
                     'Timestamp'
                 ],
                 where: {
@@ -45,12 +38,23 @@ async function main() {
                     ['Timestamp', 'DESC']
                 ] 
             });
-            
+
+            let dataValues = {
+                Price: item.dataValues.Price,
+                EPS: company.EPS,
+                BVPS: company.BVPS,
+                PE: company.PE,
+                PBV: company.PBV,
+                CurrentRatio: company.CurrentRatio,
+                DividendJson: company.DividendJson,
+                EarningsJson: company.EarningsJson,
+            }
+
             let companyData = {
                 CompanyName: company.Name,
                 Price: item.dataValues.Price,
                 MethodValues: methods.map((method) => {
-                    let value = method.calc(item.dataValues);
+                    let value = method.calc(dataValues);
                     return {
                         value: value,
                         percentage: method.calcDifference ? ((value / item.dataValues.Price) - 1) : undefined,

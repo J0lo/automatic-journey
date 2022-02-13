@@ -6,15 +6,6 @@ const methods = require('./methods');
 const tableStyle = "width: 100%; border: 1px solid;";
 const theadStyle = "border: 1px solid;";
 const tdStyle = "border: 1px solid;";
-const styles = `<style type="text/css" scoped>
-    span em {
-        display: none
-    }
-
-    span:hover em {
-        display: block
-    }
-</style>`;
 
 const currencyFormatter = new Intl.NumberFormat('pl-PL', {
     style: 'currency',
@@ -33,9 +24,6 @@ function generateHtml(data) {
 
     methods.forEach((method) => {
         header += `<th style='${theadStyle}'>${method.name}</th>`;
-        if(method.calcDifference) {
-            header += `<th style='${theadStyle}'>% ${method.name} Diff</th>`;
-        }
     });
     header += `</thead>`;
 
@@ -47,10 +35,15 @@ function generateHtml(data) {
         body += `<td style='${tdStyle}'>${currencyFormatter.format(item.Price)}</td>`;
 
         item.MethodValues.forEach((method) => {
-            let value = method.useNumberFormatter ? currencyFormatter.format(method.value) : `<span><strong>${method.value.Result}</strong><em>${JSON.stringify(method.value)}</em></span>`;
-            body += `<td style='${tdStyle}'>${value}</td>`;
+            let value = method.useNumberFormatter ? currencyFormatter.format(method.value) : `<span title='${JSON.stringify(method.value)}'>${method.value.Result}</span>`;
+            
             if(method.calcDifference) {
-                body += `<td style='${tdStyle}'>${percentageFormatter.format(method.percentage)}</td>`;
+                let percentage = method.percentage;
+                let fontColor = percentage > 0 ? "color: green" : "color: red";
+                body += `<td style='${tdStyle}'>${value} <span style='${fontColor}'>(${percentageFormatter.format(percentage)})</span></td>`;
+            }
+            else {
+                body += `<td style='${tdStyle}'>${value}</td>`;
             }
         });
         body += `</tr>`;
@@ -58,7 +51,7 @@ function generateHtml(data) {
 
     body += `</tbody>`;
 
-    return `${styles}<h2>Financial Report</h2><table style='${tableStyle}'>${header}${body}</table>`;
+    return `<h2>Financial Report</h2><table style='${tableStyle}'>${header}${body}</table>`;
 }
 
 var mailer = {
